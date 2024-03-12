@@ -47,23 +47,33 @@ export default function Home() {
     {id: 3, date:'3/11/2024', title: 'My third note!!!', author: 'Walter Dean Myers', body:'Thrice is the third note'}
   ]
 
-  const noteItems = example_notes.map( note_item => 
-    <Note key={note_item.id} title={note_item.title} author={note_item.author} date={note_item.date} body={note_item.body} />
-  )
+  
 
-  const [notes, setNotes] = useState<any>(noteItems);
+  const [notes, setNotes] = useState<any>(
+    [
+      {id: 1, date:'3/11/2024', title: 'My first note!!!', author: 'Walter Dean Myers', body:'This embarks my first note of this app'},
+      {id: 2, date:'3/11/2024', title: 'My second note!!!', author: 'Walter Dean Myers', body:'Here we are again with another note'},
+      {id: 3, date:'3/11/2024', title: 'My third note!!!', author: 'Walter Dean Myers', body:'Thrice is the third note'}
+    ]
+  );
   const [inputText, setInputText] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
+
+  function renderNotes(){
+    return (
+      notes.map((note_item: any) => 
+        <Note key={note_item.id} title={note_item.title} author={note_item.author} date={note_item.date} body={note_item.body} />
+      )
+    )
+  } 
 
   function handleTextareaChange(e: any){
     setInputText(e.target.value)
   }
 
   function submit(e: any){
-    console.log('input', inputText)
     const newnote = { id: 4, title: inputText, author: 'John Steinbeck', date:'3/11/2024', body:'A new note embarks this app' }
     setNotes((notes: any) => [...notes, newnote])
-    console.log('notes', notes)
     e.preventDefault();        
   }
 
@@ -83,7 +93,7 @@ export default function Home() {
           <button className="delete-btn">Delete</button>
         </div>
         <div className="notes-area">
-          {noteItems}
+          {renderNotes()}
         </div>
       </div>
 
