@@ -16,6 +16,8 @@ function SimpleDialog(props: SimpleDialogProps) {
   const [inputAuthorText, setAuthorText] = useState('');
   const [inputBodyText, setBodyText] = useState('');
 
+  let actionTitle = ''
+
 
   const handleClose = () => {
     onClose(selectedValue);
@@ -25,29 +27,42 @@ function SimpleDialog(props: SimpleDialogProps) {
     onClose(value);
   };
 
+  if(selectedValue === "create"){
+    actionTitle = "Create a New Note!!"
+  } else if(selectedValue === "edit"){
+    actionTitle = "Edit a Note!!"
+  } else{
+    actionTitle = "Delete a Note!!"
+  }
+
+
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Create a New Note!!</DialogTitle>
-      <form>
-        <label>Title</label>
-        <input placeholder="Enter in a title" value={inputTitleText}  />
-        <label>Author</label>
-        <input placeholder="Put your name here" value={inputAuthorText}  />
-        <label>Contents</label>
-        <textarea placeholder="Enter in the contents of your note to say" value={inputBodyText}  />
-      </form>
+      <div className="action-dialog">
+        <DialogTitle>{actionTitle}</DialogTitle>
+        <form>
+          <div>
+            <label>Title</label>
+            <br />
+            <input placeholder="Enter in a title"  />
+          </div>
+          <div>
+            <label>Author</label>
+            <br />
+            <input placeholder="Put your name here"  />
+          </div>
+          <div>
+            <label>Contents</label>
+            <br />
+            <textarea placeholder="Enter in the contents of your note to say"  />
+          </div>    
+        </form>
+      </div>      
     </Dialog>
   );
 }
 
-export default function Home() {
-  const example_notes = [
-    {id: 1, date:'3/11/2024', title: 'My first note!!!', author: 'Walter Dean Myers', body:'This embarks my first note of this app'},
-    {id: 2, date:'3/11/2024', title: 'My second note!!!', author: 'Walter Dean Myers', body:'Here we are again with another note'},
-    {id: 3, date:'3/11/2024', title: 'My third note!!!', author: 'Walter Dean Myers', body:'Thrice is the third note'}
-  ]
-
-  
+export default function Home() { 
 
   const [notes, setNotes] = useState<any>(
     [
@@ -57,7 +72,19 @@ export default function Home() {
     ]
   );
   const [inputText, setInputText] = useState<string>('');
+  // State for dialog box
   const [open, setOpen] = useState<boolean>(false);
+  const [selectedValue, setSelectedValue] = useState('');
+
+  const handleClickOpen = () => {
+    setOpen(true);
+    setSelectedValue('create')
+  };
+
+  const handleClose = (value: string) => {
+    setOpen(false);
+    setSelectedValue(value);
+  };
 
   function renderNotes(){
     return (
@@ -89,13 +116,19 @@ export default function Home() {
         </div>
         <h2>Notes by Solace</h2>
         <div className="ui-btns">
-          <button className="create-btn">Create a Note</button>
+          <button className="create-btn" onClick={handleClickOpen}>Create a Note</button>
           <button className="delete-btn">Delete</button>
         </div>
         <div className="notes-area">
           {renderNotes()}
         </div>
       </div>
+
+      <SimpleDialog
+        selectedValue={selectedValue}
+        open={open}
+        onClose={handleClose}
+      />
 
     </main>
   );
