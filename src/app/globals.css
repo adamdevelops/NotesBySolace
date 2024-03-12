@@ -46,8 +46,27 @@ body {
 
 .search-btn{
   text-align: left;
-  margin-right: 10px;
+  margin: 0 10px;
+  font-size: 10px;
 }
+
+.ui-btns button{
+  margin: 0 10px;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+}
+
+.create-btn{
+  background-color: #FFF740;
+  float: left;
+}
+
+.delete-btn{
+  background-color: #FF65A3;
+  float: right;
+}
+
+
 
 .notes-area{
   display: flex;
