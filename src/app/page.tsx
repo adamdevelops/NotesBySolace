@@ -7,13 +7,14 @@ import { Note } from './interfaces/Note';
 
 export interface SimpleDialogProps {
   open: boolean;
-  selectedValue: string;
+  selectedAction: string;
+  note: any;
   onClose: (value: string) => void;
   submitNewNote: (value: Note) => void;
 }
 
 function SimpleDialog(props: SimpleDialogProps) {
-  const { onClose, selectedValue, open, submitNewNote } = props;
+  const { onClose, selectedAction, open, submitNewNote } = props;
   const [inputTitleText, setInputTitleText] = useState('');
   const [inputAuthorText, setInputAuthorText] = useState('');
   const [inputBodyText, setInputBodyText] = useState('');
@@ -22,7 +23,7 @@ function SimpleDialog(props: SimpleDialogProps) {
 
 
   const handleClose = () => {
-    onClose(selectedValue);
+    onClose(selectedAction);
   };
 
   const handleListItemClick = (value: string) => {
@@ -46,19 +47,17 @@ function SimpleDialog(props: SimpleDialogProps) {
     e.preventDefault()
   }
 
-  if(selectedValue === "create"){
+  if(selectedAction === "create"){
     actionTitle = "Create a New Note!!"
-  } else if(selectedValue === "edit"){
+  } else if(selectedAction === "edit"){
     actionTitle = "Edit a Note!!"
   } else{
     actionTitle = "Delete a Note!!"
   }
 
-
-  return (
-    <Dialog onClose={handleClose} open={open}>
-      <div className="action-dialog">
-        <DialogTitle>{actionTitle}</DialogTitle>
+  const renderForm = () => {
+    if(selectedAction === "create"){
+      return(
         <form onSubmit={createNewNote}>
           <div>
             <label>Title</label>
@@ -77,6 +76,26 @@ function SimpleDialog(props: SimpleDialogProps) {
           </div>
           <button>Create Note</button>    
         </form>
+      )
+    } else {
+        if(selectedAction === "delete"){
+          return(
+            <div>
+              <p className="note-body">Do you want to delete this note?</p>
+              <button>Delete</button>
+              <button onClick={handleClose}>Cancel</button>
+            </div>
+          )
+        }
+    }
+  }
+
+
+  return (
+    <Dialog onClose={handleClose} open={open}>
+      <div className="action-dialog">
+        <DialogTitle>{actionTitle}</DialogTitle>
+        {renderForm()}
       </div>      
     </Dialog>
   );
@@ -91,38 +110,41 @@ export default function Home() {
       {id: 3, date:'3/11/2024', title: 'My third note!!!', author: 'Walter Dean Myers', body:'Thrice is the third note'}
     ]
   );
-  const [inputText, setInputText] = useState<string>('');
+  const [searchInputText, setSearchInputText] = useState<string>('');
   // State for dialog box
   const [open, setOpen] = useState<boolean>(false);
-  const [selectedValue, setSelectedValue] = useState('');
+  const [selectedAction, setSelectedAction] = useState('');
+  const [selectedNote, setSelectedNote] = useState('');
 
-  const handleClickOpen = () => {
+
+  const handleClickOpen = (action: string, note?: any ) => {
     setOpen(true);
-    setSelectedValue('create')
+    setSelectedAction(action)
+
+    // Set state for selected note to pass to dialog if note is not undefined
+    if(note != undefined){
+      setSelectedNote(note)
+    }    
   };
 
   const handleClose = (value: string) => {
     setOpen(false);
-    setSelectedValue(value);
+    setSelectedAction(value);
   };
 
   const renderNotes = () => {
     return (
       notes.map((note_item: any) => 
-        <NoteItem key={note_item.id} title={note_item.title} author={note_item.author} date={note_item.date} body={note_item.body} />
+        <NoteItem key={note_item.id} note={note_item} title={note_item.title} author={note_item.author} date={note_item.date} body={note_item.body} />
       )
     )
   } 
 
   function handleTextareaChange(e: any){
-    setInputText(e.target.value)
+    setSearchInputText(e.target.value)
   }
 
-  function submitNewNote(note: Note){
-    const newnote = { id: 4, title: inputText, author: 'John Steinbeck', date:'3/11/2024', body:'A new note embarks this app' }
-    console.log('newNote', note)
-    console.log(newnote)
-    
+  function submitNewNote(note: Note){    
     setNotes((notes: any) => [...notes, note])
   }
 
@@ -132,14 +154,13 @@ export default function Home() {
         <div className="search-area">
             <form >
               <button className="search-btn">Search</button>
-              <input placeholder="Search for notes..." value={inputText} onChange={handleTextareaChange} />
+              <input placeholder="Search for notes..." value={searchInputText} onChange={handleTextareaChange} />
             </form>
            
         </div>
         <h2>Notes by Solace</h2>
         <div className="ui-btns">
-          <button className="create-btn" onClick={handleClickOpen}>Create a Note</button>
-          <button className="delete-btn">Delete</button>
+          <button className="create-btn" onClick={handleClickOpen('create')}>Create a Note</button>
         </div>
         <div className="notes-area">
           {renderNotes()}
@@ -147,10 +168,11 @@ export default function Home() {
       </div>
 
       <SimpleDialog
-        selectedValue={selectedValue}
+        selectedAction={selectedAction}
         open={open}
         onClose={handleClose}
         submitNewNote = {submitNewNote}
+        note = {selectedNote}
       />
 
     </main>
