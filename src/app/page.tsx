@@ -11,10 +11,12 @@ export interface SimpleDialogProps {
   note: any;
   onClose: (value: string) => void;
   submitNewNote: (value: Note) => void;
+  editNote: (value: Note) => void;
+  deleteNote: (value: Note) => void;
 }
 
 function SimpleDialog(props: SimpleDialogProps) {
-  const { onClose, selectedAction, open, submitNewNote } = props;
+  const { onClose, selectedAction, open, submitNewNote, editNote, deleteNote} = props;
   const [inputTitleText, setInputTitleText] = useState('');
   const [inputAuthorText, setInputAuthorText] = useState('');
   const [inputBodyText, setInputBodyText] = useState('');
@@ -82,7 +84,7 @@ function SimpleDialog(props: SimpleDialogProps) {
           return(
             <div>
               <p className="note-body">Do you want to delete this note?</p>
-              <button>Delete</button>
+              <button onClick={deleteNote}>Delete</button>
               <button onClick={handleClose}>Cancel</button>
             </div>
           )
@@ -114,7 +116,7 @@ export default function Home() {
   // State for dialog box
   const [open, setOpen] = useState<boolean>(false);
   const [selectedAction, setSelectedAction] = useState<string>('');
-  const [selectedNote, setSelectedNote] = useState('');
+  const [selectedNote, setSelectedNote] = useState<any>(undefined);
 
 
   const handleClickOpen = (action: string, note?: any ) => {
@@ -127,9 +129,9 @@ export default function Home() {
     }    
   };
 
-  const handleClose = (value: string) => {
+  const handleClose = () => {
     setOpen(false);
-    setSelectedAction(value);
+    setSelectedAction('');
   };
 
   const renderNotes = () => {
@@ -146,6 +148,19 @@ export default function Home() {
 
   function submitNewNote(note: Note){    
     setNotes((notes: any) => [...notes, note])
+  }
+
+  function editNote(note: Note){
+
+  }
+
+  function deleteNote(deletedNote: Note){
+    let updatednotes = notes.filter((note: Note) => note.id != selectedNote.id)
+    console.log('deleted note', deletedNote)
+    console.log('new notes', updatednotes)
+
+    setNotes(updatednotes)
+    handleClose()
   }
 
   return (
@@ -172,6 +187,7 @@ export default function Home() {
         open={open}
         onClose={handleClose}
         submitNewNote = {submitNewNote}
+        deleteNote = {deleteNote}
         note = {selectedNote}
       />
 
