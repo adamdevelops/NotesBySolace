@@ -2,19 +2,21 @@
 import { useState, ChangeEvent } from 'react';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import Note from './components/note'
+import NoteItem from './components/noteItem'
+import { Note } from './interfaces/Note';
 
 export interface SimpleDialogProps {
   open: boolean;
   selectedValue: string;
   onClose: (value: string) => void;
+  submitNewNote: (value: Note) => void;
 }
 
 function SimpleDialog(props: SimpleDialogProps) {
-  const { onClose, selectedValue, open } = props;
-  const [inputTitleText, setTitleText] = useState('');
-  const [inputAuthorText, setAuthorText] = useState('');
-  const [inputBodyText, setBodyText] = useState('');
+  const { onClose, selectedValue, open, submitNewNote } = props;
+  const [inputTitleText, setInputTitleText] = useState('');
+  const [inputAuthorText, setInputAuthorText] = useState('');
+  const [inputBodyText, setInputBodyText] = useState('');
 
   let actionTitle = ''
 
@@ -26,6 +28,23 @@ function SimpleDialog(props: SimpleDialogProps) {
   const handleListItemClick = (value: string) => {
     onClose(value);
   };
+
+  const createNewNote = (e: any) => {
+    let date = new Date()
+
+    let newNote = {
+      id: 4,
+      title: inputTitleText,
+      author: inputAuthorText,
+      body: inputBodyText,
+      date: date.toString()
+    }
+
+    console.log(newNote)
+
+    submitNewNote(newNote)
+    e.preventDefault()
+  }
 
   if(selectedValue === "create"){
     actionTitle = "Create a New Note!!"
@@ -40,22 +59,23 @@ function SimpleDialog(props: SimpleDialogProps) {
     <Dialog onClose={handleClose} open={open}>
       <div className="action-dialog">
         <DialogTitle>{actionTitle}</DialogTitle>
-        <form>
+        <form onSubmit={createNewNote}>
           <div>
             <label>Title</label>
             <br />
-            <input placeholder="Enter in a title"  />
+            <input placeholder="Enter in a title" onChange={(e) => setInputTitleText(e.target.value)}  />
           </div>
           <div>
             <label>Author</label>
             <br />
-            <input placeholder="Put your name here"  />
+            <input placeholder="Put your name here" onChange={(e) => setInputAuthorText(e.target.value)} />
           </div>
           <div>
             <label>Contents</label>
             <br />
-            <textarea placeholder="Enter in the contents of your note to say"  />
-          </div>    
+            <textarea placeholder="Enter in the contents of your note to say" onChange={(e) => setInputBodyText(e.target.value)} />
+          </div>
+          <button>Create Note</button>    
         </form>
       </div>      
     </Dialog>
@@ -86,10 +106,10 @@ export default function Home() {
     setSelectedValue(value);
   };
 
-  function renderNotes(){
+  const renderNotes = () => {
     return (
       notes.map((note_item: any) => 
-        <Note key={note_item.id} title={note_item.title} author={note_item.author} date={note_item.date} body={note_item.body} />
+        <NoteItem key={note_item.id} title={note_item.title} author={note_item.author} date={note_item.date} body={note_item.body} />
       )
     )
   } 
@@ -98,17 +118,19 @@ export default function Home() {
     setInputText(e.target.value)
   }
 
-  function submit(e: any){
+  function submitNewNote(note: Note){
     const newnote = { id: 4, title: inputText, author: 'John Steinbeck', date:'3/11/2024', body:'A new note embarks this app' }
-    setNotes((notes: any) => [...notes, newnote])
-    e.preventDefault();        
+    console.log('newNote', note)
+    console.log(newnote)
+    
+    setNotes((notes: any) => [...notes, note])
   }
 
   return (
     <main>
       <div className="app">
         <div className="search-area">
-            <form onSubmit={submit}>
+            <form >
               <button className="search-btn">Search</button>
               <input placeholder="Search for notes..." value={inputText} onChange={handleTextareaChange} />
             </form>
@@ -128,6 +150,7 @@ export default function Home() {
         selectedValue={selectedValue}
         open={open}
         onClose={handleClose}
+        submitNewNote = {submitNewNote}
       />
 
     </main>

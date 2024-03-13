@@ -1,6 +1,6 @@
 
 
-export default function Note(params) {
+export default function NoteItem(params) {
 
     return(
        <div className="note">
