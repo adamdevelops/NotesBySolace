@@ -9,8 +9,8 @@ export default function NoteItem(params) {
         
         <p className="note-body">{params.body}</p>
 
-        <button onClick={handleClickOpen('edit', params.note)}>Edit Note</button>
-        <button className="delete-btn" onClick={handleClickOpen('delete', params.note)}>Delete Note</button>
+        <button onClick={() => params.handleClickOpen('edit', params.note)}>Edit Note</button>
+        <button className="delete-btn" onClick={() => params.handleClickOpen('delete', params.note)}>Delete Note</button>
        </div> 
     );
 }

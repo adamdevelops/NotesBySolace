@@ -113,7 +113,7 @@ export default function Home() {
   const [searchInputText, setSearchInputText] = useState<string>('');
   // State for dialog box
   const [open, setOpen] = useState<boolean>(false);
-  const [selectedAction, setSelectedAction] = useState('');
+  const [selectedAction, setSelectedAction] = useState<string>('');
   const [selectedNote, setSelectedNote] = useState('');
 
 
@@ -135,7 +135,7 @@ export default function Home() {
   const renderNotes = () => {
     return (
       notes.map((note_item: any) => 
-        <NoteItem key={note_item.id} note={note_item} title={note_item.title} author={note_item.author} date={note_item.date} body={note_item.body} />
+        <NoteItem key={note_item.id} note={note_item} handleClickOpen={handleClickOpen} title={note_item.title} author={note_item.author} date={note_item.date} body={note_item.body} />
       )
     )
   } 
@@ -160,7 +160,7 @@ export default function Home() {
         </div>
         <h2>Notes by Solace</h2>
         <div className="ui-btns">
-          <button className="create-btn" onClick={handleClickOpen('create')}>Create a Note</button>
+          <button className="create-btn" onClick={() => handleClickOpen('create')}>Create a Note</button>
         </div>
         <div className="notes-area">
           {renderNotes()}
