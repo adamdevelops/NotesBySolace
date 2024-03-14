@@ -1,5 +1,5 @@
 'use client'
-import { useState, ChangeEvent, useEffect } from 'react';
+import { useState, ChangeEvent, useEffect, useRef } from 'react';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import NoteItem from './components/noteItem'
@@ -159,15 +159,19 @@ export default function Home() {
     date: ''
   }
 
-  const [notes, setNotes] = useState<any>(
-    [
-      {id: 1, date:'3/11/2024', title: 'My first note!!!', author: 'Walter Dean Myers', body:'This embarks my first note of this app'},
-      {id: 2, date:'3/11/2024', title: 'My second note!!!', author: 'Walter Dean Myers', body:'Here we are again with another note'},
-      {id: 3, date:'3/11/2024', title: 'My third note!!!', author: 'Walter Dean Myers', body:'Thrice is the third note'}
-    ]
-  );
+  let example_notes = [
+    {id: 1, date:'3/11/2024', title: 'My first note!!!', author: 'Walter Dean Myers', body:'This embarks my first note of this app'},
+    {id: 2, date:'3/11/2024', title: 'My second note!!!', author: 'Walter Dean Myers', body:'Here we are again with another note'},
+    {id: 3, date:'3/11/2024', title: 'My third note!!!', author: 'Walter Dean Myers', body:'Thrice is the third note'}
+  ]
+
+  const [notes, setNotes] = useState<any>(example_notes);
+  // Search field state
   const [searchInputText, setSearchInputText] = useState<string>('');
+  const prevNotesRef = useRef<any>([])
+  // Keep track of unused ID to assign to new notes
   const [nextId, setNextId] = useState<number>(4)
+
   // State for dialog box
   const [open, setOpen] = useState<boolean>(false);
   const [selectedAction, setSelectedAction] = useState<string>('');
@@ -208,6 +212,17 @@ export default function Home() {
     let filtered_notes = notes.filter((note: any) => note.title.includes(searchInputText) || note.body.includes(searchInputText));
 
     console.log('filtered_notes', filtered_notes)
+
+
+    prevNotesRef.current = notes
+    setNotes(filtered_notes)
+
+    event?.preventDefault()
+  }
+
+  function clearSearch () {
+    setSearchInputText('')
+    setNotes(prevNotesRef.current)
     event?.preventDefault()
   }
 
@@ -257,6 +272,7 @@ export default function Home() {
             <form >
               <button className="search-btn" onClick={searchNotes}>Search</button>
               <input placeholder="Search for notes..." value={searchInputText} onChange={handleTextareaChange} />
+              <button onClick={clearSearch}>X</button>
             </form>
            
         </div>
