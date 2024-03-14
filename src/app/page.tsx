@@ -1,5 +1,5 @@
 'use client'
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import NoteItem from './components/noteItem'
@@ -17,14 +17,22 @@ export interface SimpleDialogProps {
 
 function SimpleDialog(props: SimpleDialogProps) {
   const { onClose, selectedAction, note, open, submitNewNote, editNote, deleteNote} = props;
-  const [inputNote, setInputNote] = useState(note)
+  const [inputNote, setInputNote] = useState('')
   const [inputTitleText, setInputTitleText] = useState('');
   const [inputAuthorText, setInputAuthorText] = useState('');
   const [inputBodyText, setInputBodyText] = useState('');
 
   let actionTitle = ''
 
+  useEffect(() => {
+    setInputNote(note)
+  }
+  , [note])
+
   console.log('note', note)
+  console.log('inputNote', inputNote)
+
+
 
   const onChangeNote = (e: any) => {
     setInputNote(
@@ -35,6 +43,7 @@ function SimpleDialog(props: SimpleDialogProps) {
   }
 
   const handleClose = () => {
+    console.log('cancel')
     setInputNote(
       {
         title: '',
@@ -82,8 +91,7 @@ function SimpleDialog(props: SimpleDialogProps) {
   if(selectedAction === "create"){
     actionTitle = "Create a New Note!!"
   } else if(selectedAction === "edit"){
-    actionTitle = "Edit a Note!!"
-    
+    actionTitle = "Edit a Note!!"    
   } else{
     actionTitle = "Delete a Note!!"
   }
@@ -97,8 +105,10 @@ function SimpleDialog(props: SimpleDialogProps) {
       if(selectedAction === "create"){
         action_btn = <button onClick={createNewNote}>Create Note</button>
       } else{
-        action_btn = <button onClick={editExistingNote}>Edit Note</button> 
+        action_btn = <button onClick={editExistingNote}>Edit Note</button>         
       }
+
+      console.log('inputNote', inputNote)
 
       return(
         <form >
@@ -185,6 +195,7 @@ export default function Home() {
   const handleClose = () => {
     setOpen(false);
     setSelectedAction('');
+    setSelectedNote(initial_note)
     event?.preventDefault()
   };
 
