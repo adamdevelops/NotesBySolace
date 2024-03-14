@@ -70,6 +70,9 @@ function SimpleDialog(props: SimpleDialogProps) {
     actionTitle = "Create a New Note!!"
   } else if(selectedAction === "edit"){
     actionTitle = "Edit a Note!!"
+    // setInputTitleText(note.title)
+    // setInputAuthorText(note.author)
+    // setInputBodyText(note.body)
   } else{
     actionTitle = "Delete a Note!!"
   }
@@ -83,9 +86,7 @@ function SimpleDialog(props: SimpleDialogProps) {
       } else{
         action_btn = <button onClick={editExistingNote}>Edit Note</button>
 
-        // setInputTitleText(note.title)
-        // setInputAuthorText(note.author)
-        // setInputBodyText(note.body)
+        
       }
 
       return(
