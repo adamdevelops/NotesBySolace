@@ -76,6 +76,8 @@ body {
 }
 
 .note{
+  display: flex;
+  flex-direction: column;
   width: 250px;
   height: 250px;
   margin: 10px;
@@ -97,6 +99,16 @@ body {
   font-size: small;
 }
 
+.modify-note-btns{
+  margin: 0 5px;
+  margin-top: auto;
+  margin-bottom: 5px;
+
+  button{
+    margin: 0 5px;
+  }
+}
+
 .action-dialog{
   width: 300px;
   height: 300px;
@@ -107,4 +119,10 @@ body {
 
 .action-dialog form{
   margin: 0 10px;
+}
+
+.dialog-btn-area{
+  button{
+    margin: 0 5px;
+  }
 }

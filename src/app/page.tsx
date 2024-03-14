@@ -17,6 +17,7 @@ export interface SimpleDialogProps {
 
 function SimpleDialog(props: SimpleDialogProps) {
   const { onClose, selectedAction, open, submitNewNote, editNote, deleteNote} = props;
+  const [note, setNote] = useState(props.note)
   const [inputTitleText, setInputTitleText] = useState('');
   const [inputAuthorText, setInputAuthorText] = useState('');
   const [inputBodyText, setInputBodyText] = useState('');
@@ -25,18 +26,17 @@ function SimpleDialog(props: SimpleDialogProps) {
 
 
   const handleClose = () => {
+    setInputTitleText('')
+    setInputAuthorText('')
+    setInputBodyText('')
     onClose(selectedAction);
-  };
-
-  const handleListItemClick = (value: string) => {
-    onClose(value);
   };
 
   const createNewNote = (e: any) => {
     let date = new Date()
 
     let newNote = {
-      id: 4,
+      id: 0,
       title: inputTitleText,
       author: inputAuthorText,
       body: inputBodyText,
@@ -49,6 +49,23 @@ function SimpleDialog(props: SimpleDialogProps) {
     e.preventDefault()
   }
 
+  const editExistingNote = (e: any) => {
+    let date = new Date()
+
+    let editedNote = {
+      id: 0,
+      title: inputTitleText,
+      author: inputAuthorText,
+      body: inputBodyText,
+      date: date.toString()
+    }
+
+    console.log(editedNote)
+
+    editNote(editedNote)
+    e.preventDefault()
+  }
+
   if(selectedAction === "create"){
     actionTitle = "Create a New Note!!"
   } else if(selectedAction === "edit"){
@@ -58,31 +75,47 @@ function SimpleDialog(props: SimpleDialogProps) {
   }
 
   const renderForm = () => {
-    if(selectedAction === "create"){
+    if(selectedAction === "create" || "edit"){
+      let action_btn;
+
+      if(selectedAction === "create"){
+        action_btn = <button onClick={createNewNote}>Create Note</button>
+      } else{
+        action_btn = <button onClick={editExistingNote}>Edit Note</button>
+
+        // setInputTitleText(note.title)
+        // setInputAuthorText(note.author)
+        // setInputBodyText(note.body)
+      }
+
       return(
-        <form onSubmit={createNewNote}>
+        <form >
           <div>
             <label>Title</label>
             <br />
-            <input placeholder="Enter in a title" onChange={(e) => setInputTitleText(e.target.value)}  />
+            <input placeholder="Enter in a title" defaultValue={inputTitleText} onChange={(e) => setInputTitleText(e.target.value)}  />
           </div>
           <div>
             <label>Author</label>
             <br />
-            <input placeholder="Put your name here" onChange={(e) => setInputAuthorText(e.target.value)} />
+            <input placeholder="Put your name here" defaultValue={inputAuthorText} onChange={(e) => setInputAuthorText(e.target.value)} />
           </div>
           <div>
             <label>Contents</label>
             <br />
-            <textarea placeholder="Enter in the contents of your note to say" onChange={(e) => setInputBodyText(e.target.value)} />
+            <textarea placeholder="Enter in the contents of your note to say" defaultValue={inputBodyText} onChange={(e) => setInputBodyText(e.target.value)} />
           </div>
-          <button>Create Note</button>    
+          <div className="dialog-btn-area">
+            {action_btn}
+            <button onClick={handleClose}>Cancel</button>
+          </div>
+          
         </form>
       )
     } else {
         if(selectedAction === "delete"){
           return(
-            <div>
+            <div className="dialog-btn-area">
               <p className="note-body">Do you want to delete this note?</p>
               <button onClick={deleteNote}>Delete</button>
               <button onClick={handleClose}>Cancel</button>
@@ -113,6 +146,7 @@ export default function Home() {
     ]
   );
   const [searchInputText, setSearchInputText] = useState<string>('');
+  const [nextId, setNextId] = useState<number>(4)
   // State for dialog box
   const [open, setOpen] = useState<boolean>(false);
   const [selectedAction, setSelectedAction] = useState<string>('');
@@ -132,8 +166,10 @@ export default function Home() {
   const handleClose = () => {
     setOpen(false);
     setSelectedAction('');
+    event?.preventDefault()
   };
 
+  // Used to render notes in state
   const renderNotes = () => {
     return (
       notes.map((note_item: any) => 
@@ -146,18 +182,40 @@ export default function Home() {
     setSearchInputText(e.target.value)
   }
 
-  function submitNewNote(note: Note){    
-    setNotes((notes: any) => [...notes, note])
+  function searchNotes(){
+    let filtered_notes = notes.filter((note: any) => note.includes(searchInputText));
+
+    console.log('filtered_notes', filtered_notes)
+    event?.preventDefault()
   }
 
-  function editNote(note: Note){
+  function submitNewNote(new_note: Note){    
+    console.log('note', new_note)
+    new_note.id = nextId;
+    setNotes((notes: any) => [...notes, new_note])
+    setNextId(nextId + 1)
+    event?.preventDefault()
+  }
 
+  function editNote(editedNote: Note){
+    console.log('id to edit', editedNote)
+
+    // const nextNote = notes.map((note: any, i: number) => {
+    //     if (i+1 === editedNote.id) {
+    //         // Edit chosen item
+    //         let editItem = note;
+    //         editItem.title = editedNote.title
+    //         return editItem;
+    //     } else {
+    //         // The rest haven't changed
+    //         return note;
+    //     }
+    //   });
+    //   setNotes(nextNote);
   }
 
   function deleteNote(deletedNote: Note){
     let updatednotes = notes.filter((note: Note) => note.id != selectedNote.id)
-    console.log('deleted note', deletedNote)
-    console.log('new notes', updatednotes)
 
     setNotes(updatednotes)
     handleClose()
@@ -168,7 +226,7 @@ export default function Home() {
       <div className="app">
         <div className="search-area">
             <form >
-              <button className="search-btn">Search</button>
+              <button className="search-btn" onClick={searchNotes}>Search</button>
               <input placeholder="Search for notes..." value={searchInputText} onChange={handleTextareaChange} />
             </form>
            
@@ -187,6 +245,7 @@ export default function Home() {
         open={open}
         onClose={handleClose}
         submitNewNote = {submitNewNote}
+        editNote={editNote}
         deleteNote = {deleteNote}
         note = {selectedNote}
       />
