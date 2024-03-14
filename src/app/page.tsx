@@ -17,7 +17,7 @@ export interface SimpleDialogProps {
 
 function SimpleDialog(props: SimpleDialogProps) {
   const { onClose, selectedAction, note, open, submitNewNote, editNote, deleteNote} = props;
-  const [inputNote, setInputNote] = useState('')
+  const [inputNote, setInputNote] = useState<Note>()
   const [inputTitleText, setInputTitleText] = useState('');
   const [inputAuthorText, setInputAuthorText] = useState('');
   const [inputBodyText, setInputBodyText] = useState('');
@@ -29,17 +29,14 @@ function SimpleDialog(props: SimpleDialogProps) {
   }
   , [note])
 
-  console.log('note', note)
-  console.log('inputNote', inputNote)
-
-
+  // console.log('note', note)
+  // console.log('inputNote', inputNote)
 
   const onChangeNote = (e: any) => {
-    setInputNote(
-      {
-        [e.target.name]: e.target.value,
-      }
-    )
+    setInputNote((prevState: any) => ({
+        ...prevState,
+        [e.target.name]: e.target.value
+    }));
   }
 
   const handleClose = () => {
@@ -65,7 +62,7 @@ function SimpleDialog(props: SimpleDialogProps) {
       date: date.toString()
     }
 
-    console.log(newNote)
+    console.log('newNote being created', newNote)
 
     submitNewNote(newNote)
     e.preventDefault()
@@ -75,14 +72,14 @@ function SimpleDialog(props: SimpleDialogProps) {
     let date = new Date()
 
     let editedNote = {
-      id: 0,
-      title: inputTitleText,
-      author: inputAuthorText,
-      body: inputBodyText,
+      id: inputNote.id,
+      title: inputNote.title,
+      author: inputNote.author,
+      body: inputNote.body,
       date: date.toString()
     }
 
-    console.log(editedNote)
+    // console.log(editedNote)
 
     editNote(editedNote)
     e.preventDefault()
@@ -97,9 +94,7 @@ function SimpleDialog(props: SimpleDialogProps) {
   }
 
   const renderForm = () => {
-    console.log('action', selectedAction)
     if(selectedAction == "create" || selectedAction == "edit"){
-      console.log('form mode')
       let action_btn;
 
       if(selectedAction === "create"){
@@ -107,8 +102,6 @@ function SimpleDialog(props: SimpleDialogProps) {
       } else{
         action_btn = <button onClick={editExistingNote}>Edit Note</button>         
       }
-
-      console.log('inputNote', inputNote)
 
       return(
         <form >
@@ -120,12 +113,12 @@ function SimpleDialog(props: SimpleDialogProps) {
           <div>
             <label>Author</label>
             <br />
-            <input placeholder="Put your name here" name="author" defaultValue={inputNote.author} onChange={(e) => setInputAuthorText(e.target.value)} />
+            <input placeholder="Put your name here" name="author" defaultValue={inputNote.author} onChange={onChangeNote} />
           </div>
           <div>
             <label>Contents</label>
             <br />
-            <textarea placeholder="Enter in the contents of your note to say" name="body" defaultValue={inputNote.body} onChange={(e) => setInputBodyText(e.target.value)} />
+            <textarea placeholder="Enter in the contents of your note to say" name="body" defaultValue={inputNote.body} onChange={onChangeNote} />
           </div>
           <div className="dialog-btn-area">
             {action_btn}
@@ -135,7 +128,6 @@ function SimpleDialog(props: SimpleDialogProps) {
         </form>
       )
     } else {
-      console.log('delete mode')
           return(
             <div className="dialog-btn-area">
               <p className="note-body">Do you want to delete this note?</p>
@@ -224,24 +216,31 @@ export default function Home() {
     new_note.id = nextId;
     setNotes((notes: any) => [...notes, new_note])
     setNextId(nextId + 1)
+    handleClose()
     event?.preventDefault()
   }
 
   function editNote(editedNote: Note){
-    console.log('id to edit', editedNote)
-
-    // const nextNote = notes.map((note: any, i: number) => {
-    //     if (i+1 === editedNote.id) {
-    //         // Edit chosen item
-    //         let editItem = note;
-    //         editItem.title = editedNote.title
-    //         return editItem;
-    //     } else {
-    //         // The rest haven't changed
-    //         return note;
-    //     }
-    //   });
-    //   setNotes(nextNote);
+    const nextNote = notes.map((note: any, i: number) => {
+        if (i+1 === editedNote.id) {
+            // Edit chosen item
+            console.log('edit the item')
+            let editItem = note;
+            editItem = {
+              id: editedNote.id,
+              title: editedNote.title,
+              author: editedNote.author,
+              body: editedNote.body,
+              date: editedNote.date
+            }
+            return editItem;
+        } else {
+            // The rest haven't changed
+            return note;
+        }
+      });
+      setNotes(nextNote);
+      handleClose()
   }
 
   function deleteNote(deletedNote: Note){
