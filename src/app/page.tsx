@@ -16,19 +16,36 @@ export interface SimpleDialogProps {
 }
 
 function SimpleDialog(props: SimpleDialogProps) {
-  const { onClose, selectedAction, open, submitNewNote, editNote, deleteNote} = props;
-  const [note, setNote] = useState(props.note)
+  const { onClose, selectedAction, note, open, submitNewNote, editNote, deleteNote} = props;
+  const [inputNote, setInputNote] = useState(note)
   const [inputTitleText, setInputTitleText] = useState('');
   const [inputAuthorText, setInputAuthorText] = useState('');
   const [inputBodyText, setInputBodyText] = useState('');
 
   let actionTitle = ''
 
+  console.log('note', note)
+
+  const onChangeNote = (e: any) => {
+    setInputNote(
+      {
+        "id": inputNote.id,
+        "date": new Date().toString,
+        [e.target.name]: e.target.value,
+        [e.target.author]: e.target.value,
+        [e.target.body]: e.target.value
+      }
+    )
+  }
 
   const handleClose = () => {
-    setInputTitleText('')
-    setInputAuthorText('')
-    setInputBodyText('')
+    setInputNote(
+      {
+        title: '',
+        author: '',
+        body: ''
+      }
+    )
     onClose(selectedAction);
   };
 
@@ -70,9 +87,7 @@ function SimpleDialog(props: SimpleDialogProps) {
     actionTitle = "Create a New Note!!"
   } else if(selectedAction === "edit"){
     actionTitle = "Edit a Note!!"
-    // setInputTitleText(note.title)
-    // setInputAuthorText(note.author)
-    // setInputBodyText(note.body)
+    
   } else{
     actionTitle = "Delete a Note!!"
   }
@@ -84,9 +99,11 @@ function SimpleDialog(props: SimpleDialogProps) {
       if(selectedAction === "create"){
         action_btn = <button onClick={createNewNote}>Create Note</button>
       } else{
-        action_btn = <button onClick={editExistingNote}>Edit Note</button>
-
+        action_btn = <button onClick={editExistingNote}>Edit Note</button> 
         
+        // setInputTitleText(note.title)
+        // setInputAuthorText(note.author)
+        // setInputBodyText(note.body)
       }
 
       return(
@@ -94,17 +111,17 @@ function SimpleDialog(props: SimpleDialogProps) {
           <div>
             <label>Title</label>
             <br />
-            <input placeholder="Enter in a title" defaultValue={inputTitleText} onChange={(e) => setInputTitleText(e.target.value)}  />
+            <input placeholder="Enter in a title" name="title" defaultValue={inputNote.title} onChange={onChangeNote}  />
           </div>
           <div>
             <label>Author</label>
             <br />
-            <input placeholder="Put your name here" defaultValue={inputAuthorText} onChange={(e) => setInputAuthorText(e.target.value)} />
+            <input placeholder="Put your name here" name="author" defaultValue={inputNote.author} onChange={(e) => setInputAuthorText(e.target.value)} />
           </div>
           <div>
             <label>Contents</label>
             <br />
-            <textarea placeholder="Enter in the contents of your note to say" defaultValue={inputBodyText} onChange={(e) => setInputBodyText(e.target.value)} />
+            <textarea placeholder="Enter in the contents of your note to say" name="body" defaultValue={inputNote.body} onChange={(e) => setInputBodyText(e.target.value)} />
           </div>
           <div className="dialog-btn-area">
             {action_btn}
@@ -137,7 +154,15 @@ function SimpleDialog(props: SimpleDialogProps) {
   );
 }
 
-export default function Home() { 
+export default function Home() {
+  
+  let initial_note = {
+    id: 0,
+    title: '',
+    author: '',
+    body: '',
+    date: ''
+  }
 
   const [notes, setNotes] = useState<any>(
     [
@@ -151,7 +176,7 @@ export default function Home() {
   // State for dialog box
   const [open, setOpen] = useState<boolean>(false);
   const [selectedAction, setSelectedAction] = useState<string>('');
-  const [selectedNote, setSelectedNote] = useState<any>(undefined);
+  const [selectedNote, setSelectedNote] = useState<Note>(initial_note);
 
 
   const handleClickOpen = (action: string, note?: any ) => {
@@ -184,7 +209,7 @@ export default function Home() {
   }
 
   function searchNotes(){
-    let filtered_notes = notes.filter((note: any) => note.includes(searchInputText));
+    let filtered_notes = notes.filter((note: any) => note.title.includes(searchInputText) || note.body.includes(searchInputText));
 
     console.log('filtered_notes', filtered_notes)
     event?.preventDefault()
