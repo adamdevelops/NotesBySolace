@@ -29,11 +29,7 @@ function SimpleDialog(props: SimpleDialogProps) {
   const onChangeNote = (e: any) => {
     setInputNote(
       {
-        "id": inputNote.id,
-        "date": new Date().toString,
         [e.target.name]: e.target.value,
-        [e.target.author]: e.target.value,
-        [e.target.body]: e.target.value
       }
     )
   }
@@ -54,9 +50,9 @@ function SimpleDialog(props: SimpleDialogProps) {
 
     let newNote = {
       id: 0,
-      title: inputTitleText,
-      author: inputAuthorText,
-      body: inputBodyText,
+      title: inputNote.title,
+      author: inputNote.author,
+      body: inputNote.body,
       date: date.toString()
     }
 
@@ -93,17 +89,15 @@ function SimpleDialog(props: SimpleDialogProps) {
   }
 
   const renderForm = () => {
-    if(selectedAction === "create" || "edit"){
+    console.log('action', selectedAction)
+    if(selectedAction == "create" || selectedAction == "edit"){
+      console.log('form mode')
       let action_btn;
 
       if(selectedAction === "create"){
         action_btn = <button onClick={createNewNote}>Create Note</button>
       } else{
         action_btn = <button onClick={editExistingNote}>Edit Note</button> 
-        
-        // setInputTitleText(note.title)
-        // setInputAuthorText(note.author)
-        // setInputBodyText(note.body)
       }
 
       return(
@@ -131,7 +125,7 @@ function SimpleDialog(props: SimpleDialogProps) {
         </form>
       )
     } else {
-        if(selectedAction === "delete"){
+      console.log('delete mode')
           return(
             <div className="dialog-btn-area">
               <p className="note-body">Do you want to delete this note?</p>
@@ -139,7 +133,6 @@ function SimpleDialog(props: SimpleDialogProps) {
               <button onClick={handleClose}>Cancel</button>
             </div>
           )
-        }
     }
   }
 
