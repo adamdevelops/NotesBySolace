@@ -108,17 +108,17 @@ function SimpleDialog(props: SimpleDialogProps) {
           <div>
             <label>Title</label>
             <br />
-            <input placeholder="Enter in a title" name="title" defaultValue={inputNote.title} onChange={onChangeNote}  />
+            <input placeholder="Enter in a title" name="title" defaultValue={inputNote.title} onChange={onChangeNote} minLength={20} maxLength={300} />
           </div>
           <div>
             <label>Author</label>
             <br />
-            <input placeholder="Put your name here" name="author" defaultValue={inputNote.author} onChange={onChangeNote} />
+            <input placeholder="Put your name here" name="author" defaultValue={inputNote.author} onChange={onChangeNote} minLength={20} maxLength={300}/>
           </div>
           <div>
             <label>Contents</label>
             <br />
-            <textarea placeholder="Enter in the contents of your note to say" name="body" defaultValue={inputNote.body} onChange={onChangeNote} />
+            <textarea placeholder="Enter in the contents of your note to say" name="body" defaultValue={inputNote.body} onChange={onChangeNote} minLength={20} maxLength={300}/>
           </div>
           <div className="dialog-btn-area">
             {action_btn}
@@ -214,7 +214,6 @@ export default function Home() {
   // Called when searching notes via search bar
   function searchNotes(){
     let filtered_notes = notes.filter((note: any) => note.title.includes(searchInputText) || note.body.includes(searchInputText));
-
     // Set prevNotes to equal the current notes, then change displayed notes to filtered search notes
     prevNotesRef.current = notes
     setNotes(filtered_notes)
@@ -271,7 +270,7 @@ export default function Home() {
   return (
     <main>
       <div className="app">
-        <h2>Notes by Solace</h2>
+        <h2 className="header-title">Notes by Solace</h2>
         <div className="ui-area">
           <div className="ui-btns">
             <button className="create-btn" onClick={() => handleClickOpen('create')}>Create a Note</button>
@@ -279,7 +278,7 @@ export default function Home() {
           <div className="search-area">
             <button className="search-btn" onClick={searchNotes}>Search</button>
             <input placeholder="Search for notes..." value={searchInputText} onChange={handleTextareaChange} />
-            <button onClick={clearSearch}>X</button>
+            <button className="clear-search-btn" onClick={clearSearch}>X</button>
           </div>           
         </div>
         
