@@ -85,6 +85,11 @@ function SimpleDialog(props: SimpleDialogProps) {
     e.preventDefault()
   }
 
+  const deleteExistingNote = (e: any) => {
+    deleteNote(inputNote.id)
+    e.preventDefault()
+  }
+
   if(selectedAction === "create"){
     actionTitle = "Create a New Note!!"
   } else if(selectedAction === "edit"){
@@ -131,7 +136,7 @@ function SimpleDialog(props: SimpleDialogProps) {
           return(
             <div className="dialog-btn-area">
               <p className="note-body">Do you want to delete this note?</p>
-              <button onClick={deleteNote}>Delete</button>
+              <button onClick={deleteExistingNote}>Delete</button>
               <button onClick={handleClose}>Cancel</button>
             </div>
           )
@@ -289,28 +294,42 @@ export default function Home() {
     //         return note;
     //     }
     //   });
-    //   setNotes(nextNote);
+    // setNotes(nextNote);
     // handleClose()
 
     console.log('editedNote', editedNote)
 
-      fetch("http://localhost:3000/api", {
-        method: "PATCH",
-        body: JSON.stringify({ id: editedNote.id, note: editedNote }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then((res) => {
-        handleClose(); // Hide the edit form
-        setSelectedNote(initial_note); // Reset the task state
-      });
+    fetch("http://localhost:3000/api", {
+      method: "PATCH",
+      body: JSON.stringify({ id: editedNote.id, note: editedNote }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      handleClose(); // Hide the edit form
+      setSelectedNote(initial_note); // Reset the task state
+    });
   }
 
-  function deleteNote(deletedNote: Note){
-    let updatednotes = notes.filter((note: Note) => note.id != selectedNote.id)
+  function deleteNote(deletedNote: number){
+    // let updatednotes = notes.filter((note: Note) => note.id != selectedNote.id)
 
-    setNotes(updatednotes)
-    handleClose()
+    // setNotes(updatednotes)
+    // handleClose()
+
+    console.log('deletedNote', deletedNote)
+
+    fetch("http://localhost:3000/api", {
+      method: "DELETE",
+      body: JSON.stringify({ id: deletedNote }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => console.error("Error: ", error)); // Log any errors
   }
 
   return (

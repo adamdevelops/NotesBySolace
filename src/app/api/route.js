@@ -81,3 +81,28 @@ export async function PATCH(req, res) {
     )
   );
 }
+
+// Handler for DELETE requests to delete a note by ID
+export async function DELETE(req, res) {
+  // Open a new connection if there is none
+  if (!db) {
+    db = await open({
+      filename: "./notes.db",
+      driver: sqlite3.Database,
+    });
+  }
+
+  // Extract the ID from the request body
+  const { id } = await req.json();
+
+  // Delete the todo with the specified ID from the "todo" table
+  await db.run("DELETE FROM notes WHERE id = ?", id);
+
+  // Return a success message as a JSON response with a 200 status code
+  return new Response(
+    JSON.stringify(
+      { message: "success" },
+      { headers: { "content-type": "application/json" }, status: 200 }
+    )
+  );
+}
