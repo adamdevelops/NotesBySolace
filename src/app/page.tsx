@@ -162,7 +162,10 @@ export default function Home() {
   let example_notes = [
     {id: 1, date:'3/11/2024', title: 'My first note!!!', author: 'Walter Dean Myers', body:'This embarks my first note of this app'},
     {id: 2, date:'3/11/2024', title: 'My second note!!!', author: 'Walter Dean Myers', body:'Here we are again with another note'},
-    {id: 3, date:'3/11/2024', title: 'My third note!!!', author: 'Walter Dean Myers', body:'Thrice is the third note'}
+    {id: 3, date:'3/11/2024', title: 'My third note!!!', author: 'Walter Dean Myers', body:'Thrice is the third note'},
+    {id: 4, date:'3/11/2024', title: 'My 4 note!!!', author: 'Walter Dean Myers', body:'Thrice is the third note'},
+    {id: 5, date:'3/11/2024', title: 'My 5 note!!!', author: 'Walter Dean Myers', body:'Thrice is the third note'},
+    {id: 6, date:'3/11/2024', title: 'My 6 note!!!', author: 'Walter Dean Myers', body:'Thrice is the third note'},
   ]
 
   const [notes, setNotes] = useState<any>(example_notes);
@@ -208,24 +211,24 @@ export default function Home() {
     setSearchInputText(e.target.value)
   }
 
+  // Called when searching notes via search bar
   function searchNotes(){
     let filtered_notes = notes.filter((note: any) => note.title.includes(searchInputText) || note.body.includes(searchInputText));
 
-    console.log('filtered_notes', filtered_notes)
-
-
+    // Set prevNotes to equal the current notes, then change displayed notes to filtered search notes
     prevNotesRef.current = notes
     setNotes(filtered_notes)
 
     event?.preventDefault()
   }
 
+  // Called when hitting X button in search bar to revert displayed notes before search
   function clearSearch () {
     setSearchInputText('')
     setNotes(prevNotesRef.current)
     event?.preventDefault()
   }
-
+  
   function submitNewNote(new_note: Note){    
     console.log('note', new_note)
     new_note.id = nextId;
@@ -268,18 +271,19 @@ export default function Home() {
   return (
     <main>
       <div className="app">
-        <div className="search-area">
-            <form >
-              <button className="search-btn" onClick={searchNotes}>Search</button>
-              <input placeholder="Search for notes..." value={searchInputText} onChange={handleTextareaChange} />
-              <button onClick={clearSearch}>X</button>
-            </form>
-           
-        </div>
         <h2>Notes by Solace</h2>
-        <div className="ui-btns">
-          <button className="create-btn" onClick={() => handleClickOpen('create')}>Create a Note</button>
+        <div className="ui-area">
+          <div className="ui-btns">
+            <button className="create-btn" onClick={() => handleClickOpen('create')}>Create a Note</button>
+          </div>
+          <div className="search-area">
+            <button className="search-btn" onClick={searchNotes}>Search</button>
+            <input placeholder="Search for notes..." value={searchInputText} onChange={handleTextareaChange} />
+            <button onClick={clearSearch}>X</button>
+          </div>           
         </div>
+        
+        
         <div className="notes-area">
           {renderNotes()}
         </div>

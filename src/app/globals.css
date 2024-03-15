@@ -34,15 +34,24 @@ body {
 
 .app{
   text-align: center;
-  margin: 200px 0;
+  margin: 100px 0;
+}
+
+.ui-area{
+  display: block;
+  width: 100%;
+}
+
+.ui-btns{
+  float: left;
 }
 
 .search-area{
   width: 300px;
-  right: 10px;
+  margin-right: 15px;
   border: 1px solid grey;
   border-radius: 5px;
-  display: flex;
+  float: right;
 }
 
 .search-btn{
@@ -67,17 +76,17 @@ body {
   float: right;
 }
 
-
-
 .notes-area{
   display: flex;
   flex-direction: row;
   justify-content: center;
+  width: 100%;
 }
 
 .note{
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   width: 250px;
   height: 250px;
   margin: 10px;
