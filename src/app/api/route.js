@@ -24,3 +24,60 @@ export async function GET(req, res) {
     status: 200,
   });
 }
+
+// Handler for POST requests to create a new note
+export async function POST(req, res) {
+  // Open a new connection if there is none
+  if (!db) {
+    db = await open({
+      filename: "./notes.db",
+      driver: sqlite3.Database,
+    });
+  }
+
+  // Extract the task from the request body
+  const { note } = await req.json();
+
+  const { title, author, body, date } = note;
+
+  // Insert the new note into the "notes" table
+  await db.run("INSERT INTO notes(title, author, body, date) VALUES(?, ?, ?, ?)", title, author, body, date);
+
+  // Return a success message as a JSON response with a 200 status code
+  return new Response(
+    JSON.stringify(
+      { message: "success" },
+      {
+        headers: { "content-type": "application/json" },
+        status: 200,
+      }
+    )
+  );
+}
+
+// Handler for PATCH requests to update a note by ID
+export async function PATCH(req, res) {
+  // Open a new connection if there is none
+  if (!db) {
+    db = await open({
+      filename: "./notes.db",
+      driver: sqlite3.Database,
+    });
+  }
+
+  // Extract the ID and task from the request body
+  const { id, note } = await req.json();
+
+  const { title, author, body, date } = note;
+
+  // Update the note with the specified ID in the "notes" table
+  await db.run("UPDATE notes SET title = ?, author = ?, body = ?, date = ? WHERE id = ?", title, author, body, date, id);
+
+  // Return a success message as a JSON response with a 200 status code
+  return new Response(
+    JSON.stringify(
+      { message: "success" },
+      { headers: { "content-type": "application/json" }, status: 200 }
+    )
+  );
+}

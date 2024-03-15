@@ -167,20 +167,35 @@ export default function Home() {
     {id: 5, date:'3/11/2024', title: 'My 5 note!!!', author: 'Walter Dean Myers', body:'Thrice is the third note'},
     {id: 6, date:'3/11/2024', title: 'My 6 note!!!', author: 'Walter Dean Myers', body:'Thrice is the third note'},
   ]
+  
 
-  const [notes, setNotes] = useState<any>(example_notes);
+  const [notes, setNotes] = useState<any>([]);
   // Search field state
   const [searchInputText, setSearchInputText] = useState<string>('');
   const prevNotesRef = useRef<any>([])
   // Keep track of unused ID to assign to new notes
-  const [nextId, setNextId] = useState<number>(4)
+  const [nextId, setNextId] = useState<number>(5)
 
   // State for dialog box
   const [open, setOpen] = useState<boolean>(false);
   const [selectedAction, setSelectedAction] = useState<string>('');
   const [selectedNote, setSelectedNote] = useState<Note>(initial_note);
 
+  useEffect(() => {
+    fetch("http://localhost:3000/api", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json", // Set the request headers to indicate JSON format
+      },
+    })
+      .then((res) => res.json()) // Parse the response data as JSON
+      .then((data) => {
+        console.log('data', data)
+        setNotes(data)
+      }); // Update the state with the fetched data
+  }, []);
 
+  // Handle click to open dialog box
   const handleClickOpen = (action: string, note?: any ) => {
     setOpen(true);
     setSelectedAction(action)
@@ -191,6 +206,7 @@ export default function Home() {
     }    
   };
 
+  // Handle click to close dialog box
   const handleClose = () => {
     setOpen(false);
     setSelectedAction('');
@@ -227,37 +243,67 @@ export default function Home() {
     setNotes(prevNotesRef.current)
     event?.preventDefault()
   }
+
+  // Function to reset the task
+  const handleNoteReset = () => setSelectedNote((note: any) => initial_note);
   
   function submitNewNote(new_note: Note){    
     console.log('note', new_note)
     new_note.id = nextId;
-    setNotes((notes: any) => [...notes, new_note])
+    // setNotes((notes: any) => [...notes, new_note])
     setNextId(nextId + 1)
-    handleClose()
-    event?.preventDefault()
+    // handleClose()
+    // event?.preventDefault()
+
+    event?.preventDefault();
+    fetch("http://localhost:3000/api", {
+      method: "POST",
+      body: JSON.stringify({ note: new_note }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .catch((error) => {
+        // Log any errors
+        console.error("Error: ", error);
+      })
+      //.then(handleNoteReset()); // Reset the task once the request is complete
   }
 
   function editNote(editedNote: Note){
-    const nextNote = notes.map((note: any, i: number) => {
-        if (i+1 === editedNote.id) {
-            // Edit chosen item
-            console.log('edit the item')
-            let editItem = note;
-            editItem = {
-              id: editedNote.id,
-              title: editedNote.title,
-              author: editedNote.author,
-              body: editedNote.body,
-              date: editedNote.date
-            }
-            return editItem;
-        } else {
-            // The rest haven't changed
-            return note;
-        }
+    // const nextNote = notes.map((note: any, i: number) => {
+    //     if (i+1 === editedNote.id) {
+    //         // Edit chosen item
+    //         console.log('edit the item')
+    //         let editItem = note;
+    //         editItem = {
+    //           id: editedNote.id,
+    //           title: editedNote.title,
+    //           author: editedNote.author,
+    //           body: editedNote.body,
+    //           date: editedNote.date
+    //         }
+    //         return editItem;
+    //     } else {
+    //         // The rest haven't changed
+    //         return note;
+    //     }
+    //   });
+    //   setNotes(nextNote);
+    // handleClose()
+
+    console.log('editedNote', editedNote)
+
+      fetch("http://localhost:3000/api", {
+        method: "PATCH",
+        body: JSON.stringify({ id: editedNote.id, note: editedNote }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then((res) => {
+        handleClose(); // Hide the edit form
+        setSelectedNote(initial_note); // Reset the task state
       });
-      setNotes(nextNote);
-      handleClose()
   }
 
   function deleteNote(deletedNote: Note){
