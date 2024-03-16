@@ -15,6 +15,14 @@ export interface SimpleDialogProps {
   deleteNote: (value: Note) => void;
 }
 
+let initial_note = {
+  id: 0,
+  title: '',
+  author: '',
+  body: '',
+  date: ''
+}
+
 function SimpleDialog(props: SimpleDialogProps) {
   const { onClose, selectedAction, note, open, submitNewNote, editNote, deleteNote} = props;
   const [inputNote, setInputNote] = useState<Note>()
@@ -41,13 +49,7 @@ function SimpleDialog(props: SimpleDialogProps) {
 
   const handleClose = () => {
     console.log('cancel')
-    setInputNote(
-      {
-        title: '',
-        author: '',
-        body: ''
-      }
-    )
+    setInputNote(initial_note)
     onClose(selectedAction);
   };
 
@@ -187,6 +189,21 @@ export default function Home() {
   const [selectedNote, setSelectedNote] = useState<Note>(initial_note);
 
   useEffect(() => {
+    if(notes.length === 0){
+      fetchNotes()
+    }    
+  }, [notes]);
+
+  const date = new Date();
+  console.log(
+    new Intl.DateTimeFormat('en-US', {
+      dateStyle: 'full',
+      timeStyle: 'long',
+      timeZone: 'America/New_York',
+    }).format(date),
+  );
+
+  const fetchNotes = () => {
     fetch("http://localhost:3000/api", {
       method: "GET",
       headers: {
@@ -198,7 +215,7 @@ export default function Home() {
         console.log('data', data)
         setNotes(data)
       }); // Update the state with the fetched data
-  }, []);
+  }
 
   // Handle click to open dialog box
   const handleClickOpen = (action: string, note?: any ) => {
@@ -271,8 +288,12 @@ export default function Home() {
       .catch((error) => {
         // Log any errors
         console.error("Error: ", error);
-      })
-      //.then(handleNoteReset()); // Reset the task once the request is complete
+      }).then((res) => {
+        fetchNotes() // Fetch notes to set state
+
+        handleClose();
+      });
+      
   }
 
   function editNote(editedNote: Note){
@@ -306,8 +327,9 @@ export default function Home() {
         "Content-Type": "application/json",
       },
     }).then((res) => {
-      handleClose(); // Hide the edit form
+      fetchNotes() // Fetch notes to set state
       setSelectedNote(initial_note); // Reset the task state
+      handleClose(); // Hide the edit form
     });
   }
 
@@ -328,6 +350,8 @@ export default function Home() {
     })
       .then((res) => {
         console.log(res);
+        fetchNotes() // Fetch notes to set state
+        handleClose();
       })
       .catch((error) => console.error("Error: ", error)); // Log any errors
   }
