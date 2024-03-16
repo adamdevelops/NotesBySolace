@@ -12,7 +12,7 @@ export interface SimpleDialogProps {
   onClose: (value: string) => void;
   submitNewNote: (value: Note) => void;
   editNote: (value: Note) => void;
-  deleteNote: (value: Note) => void;
+  deleteNote: (value: number) => void;
 }
 
 let initial_note = {
@@ -25,7 +25,7 @@ let initial_note = {
 
 function SimpleDialog(props: SimpleDialogProps) {
   const { onClose, selectedAction, note, open, submitNewNote, editNote, deleteNote} = props;
-  const [inputNote, setInputNote] = useState<Note>()
+  const [inputNote, setInputNote] = useState<Note>(initial_note)
   const [inputTitleText, setInputTitleText] = useState('');
   const [inputAuthorText, setInputAuthorText] = useState('');
   const [inputBodyText, setInputBodyText] = useState('');
@@ -88,7 +88,8 @@ function SimpleDialog(props: SimpleDialogProps) {
   }
 
   const deleteExistingNote = (e: any) => {
-    deleteNote(inputNote.id)
+    let id = inputNote.id
+    deleteNote(id)
     e.preventDefault()
   }
 
