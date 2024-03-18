@@ -155,5 +155,25 @@ body {
 }
 
 @media screen and (max-width:451px) {
-  
+  .ui-btns button{
+    margin: 0 3px;
+  }
+
+  .search-area{
+    width: 278px;
+    margin-right: 10px;
+
+    input{
+      font-size: small;
+    }
+  }
+
+  .search-btn{
+    margin: 0;
+    margin-right: 25px;
+  }
+
+  .clear-search-btn{
+    margin-left: 0;
+  }
 }
