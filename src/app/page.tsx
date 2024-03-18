@@ -4,6 +4,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import NoteItem from './components/noteItem'
 import { Note } from './interfaces/Note';
+import TextField from '@mui/material/TextField/TextField';
 
 export interface SimpleDialogProps {
   open: boolean;
@@ -26,9 +27,8 @@ let initial_note = {
 function SimpleDialog(props: SimpleDialogProps) {
   const { onClose, selectedAction, note, open, submitNewNote, editNote, deleteNote} = props;
   const [inputNote, setInputNote] = useState<Note>(initial_note)
-  const [inputTitleText, setInputTitleText] = useState('');
-  const [inputAuthorText, setInputAuthorText] = useState('');
-  const [inputBodyText, setInputBodyText] = useState('');
+  const [errorMsg, setErrorMsg] = useState<string>("")
+
 
   let actionTitle = ''
 
@@ -37,15 +37,46 @@ function SimpleDialog(props: SimpleDialogProps) {
   }
   , [note])
 
-  // console.log('note', note)
-  // console.log('inputNote', inputNote)
+  // Minimum length of chars allowed
+  const MIN_LENGTH = 20;
 
   const onChangeNote = (e: any) => {
-    setInputNote((prevState: any) => ({
-        ...prevState,
-        [e.target.name]: e.target.value
-    }));
+
+    if(e.target.value.length <= MIN_LENGTH){
+      setErrorMsg(
+        "Please enter in more than 20 characters"
+      )
+    } else{
+      setErrorMsg(
+        ""
+      )
+      setInputNote((prevState: any) => ({
+          ...prevState,
+          [e.target.name]: e.target.value
+      }));
+    }    
   }
+
+  const getTodaysDate = () => {
+    const date = new Date();
+    console.log(
+      new Intl.DateTimeFormat('en-US', {
+        dateStyle: 'full',
+        timeStyle: 'long',
+        timeZone: 'America/New_York',
+      }).format(date)
+    );
+    
+    const todayDate = new Intl.DateTimeFormat('en-US', {
+      dateStyle: 'full',
+      timeStyle: 'long',
+      timeZone: 'America/New_York',
+    }).format(date)
+
+    return todayDate
+  }
+
+  
 
   const handleClose = () => {
     console.log('cancel')
@@ -61,7 +92,7 @@ function SimpleDialog(props: SimpleDialogProps) {
       title: inputNote.title,
       author: inputNote.author,
       body: inputNote.body,
-      date: date.toString()
+      date: getTodaysDate()
     }
 
     console.log('newNote being created', newNote)
@@ -73,15 +104,16 @@ function SimpleDialog(props: SimpleDialogProps) {
   const editExistingNote = (e: any) => {
     let date = new Date()
 
+
     let editedNote = {
       id: inputNote.id,
       title: inputNote.title,
       author: inputNote.author,
       body: inputNote.body,
-      date: date.toString()
+      date: getTodaysDate()
     }
 
-    // console.log(editedNote)
+    console.log('editExistingNote', editedNote)
 
     editNote(editedNote)
     e.preventDefault()
@@ -101,6 +133,18 @@ function SimpleDialog(props: SimpleDialogProps) {
     actionTitle = "Delete a Note!!"
   }
 
+
+
+  const errorMsgValidation = (e: any) => {
+
+    if(e.target.value.length < MIN_LENGTH){
+      setErrorMsg(
+        "The input has not met the minimum number of characters"
+      );
+    }
+  }
+
+
   const renderForm = () => {
     if(selectedAction == "create" || selectedAction == "edit"){
       let action_btn;
@@ -113,20 +157,26 @@ function SimpleDialog(props: SimpleDialogProps) {
 
       return(
         <form >
-          <div>
-            <label>Title</label>
-            <br />
-            <input placeholder="Enter in a title" name="title" defaultValue={inputNote.title} onChange={onChangeNote} minLength={20} maxLength={300} />
+          <div className="form-fields">
+            <TextField id="standard-basic" label="Title" name="title" placeholder="Please enter the title of the note" error={inputNote.body.length <= MIN_LENGTH} helperText= {errorMsg} defaultValue={inputNote.title} onChange={onChangeNote} inputProps={{ minlength: 20, maxlength: 300}} />
           </div>
-          <div>
-            <label>Author</label>
-            <br />
-            <input placeholder="Put your name here" name="author" defaultValue={inputNote.author} onChange={onChangeNote} minLength={20} maxLength={300}/>
+          <div className="form-fields">
+            <TextField id="standard-basic" label="Author" name="author" placeholder="Please enter the author of the note" defaultValue={inputNote.author} onChange={onChangeNote} inputProps={{ minlength: 20, maxlength: 300 }} />
           </div>
-          <div>
-            <label>Contents</label>
-            <br />
-            <textarea placeholder="Enter in the contents of your note to say" name="body" defaultValue={inputNote.body} onChange={onChangeNote} minLength={20} maxLength={300}/>
+          <div className="form-fields">
+          <TextField
+            id="filled-multiline-static"
+            name="body" 
+            placeholder="Please enter the contents of the note"
+            error={inputNote.body.length <= MIN_LENGTH}
+            helperText= {errorMsg}
+            label="Contents"
+            multiline
+            rows={4}
+            defaultValue={inputNote.body} 
+            onChange={onChangeNote}
+            inputProps={{ minlength: 20, maxlength: 300 }}
+          />
           </div>
           <div className="dialog-btn-area">
             {action_btn}
@@ -194,15 +244,6 @@ export default function Home() {
       fetchNotes()
     }    
   }, [notes]);
-
-  const date = new Date();
-  console.log(
-    new Intl.DateTimeFormat('en-US', {
-      dateStyle: 'full',
-      timeStyle: 'long',
-      timeZone: 'America/New_York',
-    }).format(date),
-  );
 
   const fetchNotes = () => {
     fetch("http://localhost:3000/api", {

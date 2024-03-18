@@ -143,9 +143,17 @@ body {
   margin: 0 10px;
 }
 
+.form-fields{
+  margin: 20px 0; 
+}
+
 .dialog-btn-area{
   margin: 0 20px;
   button{
     margin: 0 5px;
   }
+}
+
+@media screen and (max-width:451px) {
+  
 }
