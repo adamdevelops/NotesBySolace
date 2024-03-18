@@ -242,6 +242,7 @@ export default function Home() {
   useEffect(() => {
     if(notes.length === 0){
       fetchNotes()
+      fetchSupaNotes()
     }    
   }, [notes]);
 
@@ -256,6 +257,18 @@ export default function Home() {
       .then((data) => {
         console.log('data', data)
         setNotes(data)
+      }); // Update the state with the fetched data
+  }
+  const fetchSupaNotes = () => {
+    fetch("/notes", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json", // Set the request headers to indicate JSON format
+      },
+    })
+      .then((res) => console.log('res',res)) // Parse the response data as JSON
+      .then((data) => {
+        console.log('data from Supabase', data)
       }); // Update the state with the fetched data
   }
 
