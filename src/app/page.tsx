@@ -42,19 +42,28 @@ function SimpleDialog(props: SimpleDialogProps) {
 
   const onChangeNote = (e: any) => {
 
-    if(e.target.value.length <= MIN_LENGTH){
-      setErrorMsg(
-        "Please enter in more than 20 characters"
-      )
-    } else{
-      setErrorMsg(
-        ""
-      )
+    if(e.target.name === "author"){
       setInputNote((prevState: any) => ({
-          ...prevState,
-          [e.target.name]: e.target.value
+        ...prevState,
+        [e.target.name]: e.target.value
       }));
-    }    
+    } else{
+        if(e.target.value.length <= MIN_LENGTH){
+          setErrorMsg(
+            "Please enter in more than 20 characters"
+          )
+        } else{
+          setErrorMsg(
+            ""
+          )      
+          setInputNote((prevState: any) => ({
+              ...prevState,
+              [e.target.name]: e.target.value
+          }));
+        }    
+    }
+
+    
   }
 
   const getTodaysDate = () => {
@@ -158,10 +167,10 @@ function SimpleDialog(props: SimpleDialogProps) {
       return(
         <form >
           <div className="form-fields">
-            <TextField id="standard-basic" label="Title" name="title" placeholder="Please enter the title of the note" error={inputNote.body.length <= MIN_LENGTH} helperText= {errorMsg} defaultValue={inputNote.title} onChange={onChangeNote} inputProps={{ minlength: 20, maxlength: 300}} />
+            <TextField id="standard-basic" label="Title" name="title" placeholder="Please enter the title of the note" error={inputNote.title.length <= MIN_LENGTH} helperText= {errorMsg} defaultValue={inputNote.title} onChange={onChangeNote} inputProps={{ minlength: 20, maxlength: 300}} />
           </div>
           <div className="form-fields">
-            <TextField id="standard-basic" label="Author" name="author" placeholder="Please enter the author of the note" defaultValue={inputNote.author} onChange={onChangeNote} inputProps={{ minlength: 20, maxlength: 300 }} />
+            <TextField id="standard-basic" label="Author" name="author" placeholder="Please enter the author of the note" defaultValue={inputNote.author} onChange={onChangeNote} />
           </div>
           <div className="form-fields">
           <TextField
@@ -241,7 +250,7 @@ export default function Home() {
 
   useEffect(() => {
     if(notes.length === 0){
-      fetchNotes()
+      // fetchNotes()
       fetchSupaNotes()
     }    
   }, [notes]);
@@ -270,6 +279,7 @@ export default function Home() {
       .then((res) => res.json()) // Parse the response data as JSON
       .then((data) => {
         console.log('data from Supabase', data)
+        setNotes(data.notes)
       }); // Update the state with the fetched data
 
     // try {
@@ -339,7 +349,7 @@ export default function Home() {
   const handleNoteReset = () => setSelectedNote((note: any) => initial_note);
   
   function submitNewNote(new_note: Note){    
-    console.log('note', new_note)
+    // console.log('note', new_note)
     new_note.id = nextId;
     // setNotes((notes: any) => [...notes, new_note])
     setNextId(nextId + 1)
@@ -347,22 +357,46 @@ export default function Home() {
     // event?.preventDefault()
 
     event?.preventDefault();
-    fetch("http://localhost:3000/api", {
-      method: "POST",
-      body: JSON.stringify({ note: new_note }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .catch((error) => {
-        // Log any errors
-        console.error("Error: ", error);
-      }).then((res) => {
-        fetchNotes() // Fetch notes to set state
+    // fetch("http://localhost:3000/api", {
+    //   method: "POST",
+    //   body: JSON.stringify({ note: new_note }),
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    // })
+    //   .catch((error) => {
+    //     // Log any errors
+    //     console.error("Error: ", error);
+    //   }).then((res) => {
+    //     fetchSupaNotes() // Fetch notes to set state
 
-        handleClose();
-      });
+    //     handleClose();
+    //   });
       
+
+      fetch("/api/data", {
+        method: "POST",
+        body: JSON.stringify({ note: new_note }),
+        headers: {
+          "Content-Type": "application/json", // Set the request headers to indicate JSON format
+        },
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Success:', data);
+        fetchSupaNotes();
+
+        handleClose()
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });    
+
   }
 
   function editNote(editedNote: Note){

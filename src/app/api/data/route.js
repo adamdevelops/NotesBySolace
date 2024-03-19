@@ -13,10 +13,32 @@ export async function GET() {
 }
 
 // for method POST
-export async function POST() {
+export async function POST(req, res) {
     var data = {
-        message: 'result from post'
+        message: 'result from post',
     }
 
-    return Response.json({ data })
+    const { note } = await req.json();
+
+    console.log('new_note in post', note)
+    
+    // const supabase = createClient();
+    // const { supaData } = await supabase.from("notes").upsert([note]);
+
+    try {
+        const { data, error } = await supabase
+          .from('notes')
+          .upsert([note]);
+        
+        if (error) {
+          throw error;
+        }
+  
+        console.log('Data upserted:', data);
+        // Optionally, update state or do something else on success
+      } catch (error) {
+        console.error('Error upserting data:', error.message);
+      }
+
+    return NextResponse.json({ supaData })
 }
