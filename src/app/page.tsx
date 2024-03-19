@@ -247,7 +247,7 @@ export default function Home() {
   }, [notes]);
 
   const fetchNotes = () => {
-    fetch("http://localhost:3000/api", {
+    fetch("/api", {
       method: "GET",
       headers: {
         "Content-Type": "application/json", // Set the request headers to indicate JSON format
