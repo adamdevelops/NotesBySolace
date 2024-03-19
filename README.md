@@ -41,7 +41,7 @@ Through doing this project, definitely came with some hurdles. One I would take 
     • Improving Search functionality to have filters
     • Put the app in company colors and fonts. Through research, it seems some fonts were licensed and I was not able to find alternative that were similar in TailwindCSS so I had to choose something close from Google Fonts.
 
-Live site: notes-app-kohl-zeta.vercel.app
+<a href="https://notes-app-kohl-zeta.vercel.app/">Live site</a>
 (Note that I will have code commented out for live production that is still buggy so the app can still work locally; Included picture below of live site would look like with find all query working)
 
 ![alt text](public/live_example.png)
