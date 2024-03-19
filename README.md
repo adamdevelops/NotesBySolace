@@ -2,6 +2,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+<b>Make sure you open into NotesBySolace_master directory to be able to below steps correctly.  </b>
+
 To run this application, we will need to do a few things.
 
 First, lets install Node to install the required packages to run the application.
