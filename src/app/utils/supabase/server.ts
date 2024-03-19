@@ -4,8 +4,8 @@ import { cookies } from 'next/headers'
 export function createClient() {
   const cookieStore = cookies()
   
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
+  const supabaseUrl = 'https://uqehdoxumrxycrzodmin.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxZWhkb3h1bXJ4eWNyem9kbWluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA3ODc3ODIsImV4cCI6MjAyNjM2Mzc4Mn0.VsS6ns7Fcus5YRK918UYJf5KhKA4HzqZrfaFxqIAMQE';
 
   return createServerClient(
     supabaseUrl!,
