@@ -261,7 +261,7 @@ export default function Home() {
   }
   
   async function fetchSupaNotes() {
-    fetch("http://localhost:3000/api/data", {
+    fetch("/api/data", {
       method: "GET",
       headers: {
         "Content-Type": "application/json", // Set the request headers to indicate JSON format
