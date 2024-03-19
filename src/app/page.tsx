@@ -259,17 +259,31 @@ export default function Home() {
         setNotes(data)
       }); // Update the state with the fetched data
   }
-  const fetchSupaNotes = () => {
-    fetch("/notes", {
+  
+  async function fetchSupaNotes() {
+    fetch("http://localhost:3000/api/data", {
       method: "GET",
       headers: {
         "Content-Type": "application/json", // Set the request headers to indicate JSON format
       },
     })
-      .then((res) => console.log('res',res)) // Parse the response data as JSON
+      .then((res) => res.json()) // Parse the response data as JSON
       .then((data) => {
         console.log('data from Supabase', data)
       }); // Update the state with the fetched data
+
+    // try {
+    //   const response = await fetch("/notes", {
+    //     method: "GET",
+    //     headers: {
+    //       "Content-Type": "application/json", // Set the request headers to indicate JSON format
+    //     },
+    //   });
+    //   const jsonData = await response.json();
+    //   console.log('jsonData', jsonData)
+    // } catch (error) {
+    //   console.error('Error fetching data:', error);
+    // }
   }
 
   // Handle click to open dialog box
