@@ -21,24 +21,18 @@ export async function POST(req, res) {
     const { note } = await req.json();
 
     console.log('new_note in post', note)
-    
-    // const supabase = createClient();
-    // const { supaData } = await supabase.from("notes").upsert([note]);
 
-    try {
-        const { data, error } = await supabase
-          .from('notes')
-          .upsert([note]);
-        
-        if (error) {
-          throw error;
-        }
-  
-        console.log('Data upserted:', data);
-        // Optionally, update state or do something else on success
-      } catch (error) {
-        console.error('Error upserting data:', error.message);
+
+    let randomnote = {
+        id: 7,
+        title: '!!!!!This is my test note!!!!!!!!!!This is my test note!!!!!!!!!!This is my test note!!!!!',
+        author: 'ada,',
+        body: '!!!!!This is my test note!!!!!!!!!!This is my test note!!!!!!!!!!This is my test note!!!!!!!!!!This is my test note!!!!!!!!!!This is my test note!!!!!!!!!!This is my test note!!!!!',
+        date: 'Monday, March 18, 2024 at 10:51:38 PM EDT'
       }
+    
+    const supabase = createClient();
+    const { supaData } = await supabase.from("notes").upsert(randomnote).select();
 
     return NextResponse.json({ supaData })
 }

@@ -250,8 +250,8 @@ export default function Home() {
 
   useEffect(() => {
     if(notes.length === 0){
-      // fetchNotes()
-      fetchSupaNotes()
+      fetchNotes()
+      //fetchSupaNotes()
     }    
   }, [notes]);
 
