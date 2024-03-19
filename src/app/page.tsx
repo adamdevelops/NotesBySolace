@@ -349,14 +349,13 @@ export default function Home() {
   const handleNoteReset = () => setSelectedNote((note: any) => initial_note);
   
   function submitNewNote(new_note: Note){    
-    // console.log('note', new_note)
+    console.log('note', new_note)
     new_note.id = nextId;
-    // setNotes((notes: any) => [...notes, new_note])
+    setNotes((notes: any) => [...notes, new_note])
     setNextId(nextId + 1)
-    // handleClose()
-    // event?.preventDefault()
+    handleClose()
+    event?.preventDefault()
 
-    event?.preventDefault();
     // fetch("http://localhost:3000/api", {
     //   method: "POST",
     //   body: JSON.stringify({ note: new_note }),
@@ -373,29 +372,29 @@ export default function Home() {
     //     handleClose();
     //   });
       
+    // Submit note data via Supabase
+    // fetch("/api/data", {
+    //   method: "POST",
+    //   body: JSON.stringify({ note: new_note }),
+    //   headers: {
+    //     "Content-Type": "application/json", // Set the request headers to indicate JSON format
+    //   },
+    // })
+    // .then(response => {
+    //   if (!response.ok) {
+    //     throw new Error('Network response was not ok');
+    //   }
+    //   return response.json();
+    // })
+    // .then(data => {
+    //   console.log('Success:', data);
+    //   fetchSupaNotes();
 
-      fetch("/api/data", {
-        method: "POST",
-        body: JSON.stringify({ note: new_note }),
-        headers: {
-          "Content-Type": "application/json", // Set the request headers to indicate JSON format
-        },
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Success:', data);
-        fetchSupaNotes();
-
-        handleClose()
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });    
+    //   handleClose()
+    // })
+    // .catch(error => {
+    //   console.error('Error:', error);
+    // });    
 
   }
 
